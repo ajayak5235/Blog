@@ -11,24 +11,43 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const formatResponse = (text) => {
-    return text
-    .replace(/###\s*(.*?)(\n|$)/g, "<h3>$1</h3>") // Convert "### Heading" to <h3>
-    .replace(/##\s*(.*?)(\n|$)/g, "<h2>$1</h2>") // Convert "## Heading" to <h2>
-    .replace(/#\s*(.*?)(\n|$)/g, "<h1>$1</h1>") // Convert "# Heading" to <h1>
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // Bold text
-    .replace(/\*(.*?)\*/g, "<em>$1</em>") // Italic text
-    .replace(/\"(.*?)\"/g, "&ldquo;$1&rdquo;") // Smart quotes
-    .replace(/\n{2,}/g, "</p><p>") // Preserve paragraph spacing
-    .replace(/\*\s*(.*?)(\n|$)/g, "<li>$1</li>") // Convert list items
-    .replace(/(<li>.*?<\/li>)/g, "<ul>$1</ul>") // Wrap list items in <ul>
-    .replace(/\|\|\s*/g, "<br>") // Handle custom line breaks
-    .trim();
-  };
+    const regexMap = [
+        { regex: /###\s*(.*?)(\n|$)/g, replacement: "<h3>$1</h3>\n" }, // Convert "### Heading" to <h3>
+        { regex: /##\s*(.*?)(\n|$)/g, replacement: "<h2>$1</h2>\n" }, // Convert "## Heading" to <h2>
+        { regex: /#\s*(.*?)(\n|$)/g, replacement: "<h1>$1</h1>\n" }, // Convert "# Heading" to <h1>
+        { regex: /\*\*(.*?)\*\*/g, replacement: "<strong>$1</strong>" }, // Convert **bold** to <strong>
+        { regex: /\*(.*?)\*/g, replacement: "<em>$1</em>" }, // Convert *italic* to <em>
+        { regex: /(?:\r?\n){2,}/g, replacement: "</p>\n<p>" }, // Convert multiple newlines to paragraph breaks
+        { regex: /\|\|\s*/g, replacement: "<br>" }, // Convert "||" to <br>
+
+        // Numbered list handling
+        { regex: /\n(\d+\.)\s*(.*?)(?=\n\d+\.|\n|$)/g, replacement: "<li>$1 $2</li>" }, 
+        { regex: /(<li>\d+\..*?<\/li>)+/gs, replacement: "<ol>$&</ol>" }, 
+
+        // Unordered list handling
+        { regex: /\n\*\s*(.*?)(?=\n\*|\n|$)/g, replacement: "<li>$1</li>" }, 
+        { regex: /(<li>.*?<\/li>)+/gs, replacement: "<ul>$&</ul>" }, 
+
+        // Code block formatting
+        { regex: /```javascript\s*([\s\S]*?)\s*```/g, replacement: '<pre><code class="language-javascript">$1</code></pre>' }
+    ];
+
+    // Wrap the entire text in a <p> tag if it's not already wrapped
+    let formattedText = regexMap.reduce((text, { regex, replacement }) => {
+        return text.replace(regex, replacement);
+    }, text);
+
+    if (!formattedText.startsWith("<p>")) {
+        formattedText = `<p>${formattedText}</p>`;
+    }
+
+    return formattedText.trim();
+};
 
   const handleGenerate = async (type) => {
     setLoading(true);
     try {
-      const res = await axios.post("https://ai-backend-mocha.vercel.app/generate", {
+      const res = await axios.post("http://localhost:5000/generate", {
         contentType: type,
         prompt: input,
       });
