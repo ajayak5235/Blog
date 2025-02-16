@@ -47,7 +47,7 @@ export default function App() {
   const handleGenerate = async (type) => {
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5000/generate", {
+      const res = await axios.post("https://ai-backend-mocha.vercel.app/generate", {
         contentType: type,
         prompt: input,
       });
