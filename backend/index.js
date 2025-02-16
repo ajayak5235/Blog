@@ -5,9 +5,12 @@ require("dotenv").config();
 
 const app = express();
 const PORT = 5000;
-
 app.use(corsConfig);
+
 app.use(express.json());
+
+// Handle OPTIONS preflight requests globally
+app.options("*", cors(corsConfig));
 
 app.post("/generate", async (req, res) => {
   const { contentType, prompt } = req.body;
