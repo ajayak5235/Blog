@@ -8,13 +8,7 @@ const PORT = 5000;
 app.use(express.json());
 
 // Handle OPTIONS preflight requests globally
-const corsOptions = {
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
-    credentials: true, 
-  };
-  
-  app.use(cors(corsOptions));
+app.use(cors({ origin: "*" }));
 
 app.post("/generate", async (req, res) => {
   const { contentType, prompt } = req.body;
