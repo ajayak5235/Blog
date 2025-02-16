@@ -1,12 +1,12 @@
 const express = require("express");
-const cors = require("cors");
+const corsConfig = require('./corsConfig');
 const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
 const PORT = 5000;
 
-app.use(cors({ origin: "*" }));
+app.use(corsConfig);
 app.use(express.json());
 
 app.post("/generate", async (req, res) => {
