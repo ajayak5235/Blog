@@ -1,19 +1,11 @@
 const cors = require("cors");
 
 const corsOptions = {
-  origin: (origin, callback) => {
-    const allowedOrigins = ["https://ai-content-livid.vercel.app"]; // Add your frontend URL
-
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: "https://ai-content-livid.vercel.app", // Allow frontend origin
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true, // Allow cookies and authentication headers
+  credentials: true, // Allow cookies/auth headers
+  optionsSuccessStatus: 204, // Fix preflight request issues
 };
 
 module.exports = cors(corsOptions);
-
