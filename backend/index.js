@@ -1,17 +1,20 @@
 const express = require("express");
-const corsConfig = require('./corsConfig');
 const cors = require("cors");
 const axios = require("axios");
 require("dotenv").config();
 
 const app = express();
 const PORT = 5000;
-app.use(corsConfig);
-
 app.use(express.json());
 
 // Handle OPTIONS preflight requests globally
-app.options("*", cors(corsConfig));
+const corsOptions = {
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true, 
+  };
+  
+  app.use(cors(corsOptions));
 
 app.post("/generate", async (req, res) => {
   const { contentType, prompt } = req.body;
